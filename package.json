@@ -1,0 +1,33 @@
+{
+  "name": "zoho",
+  "version": "1.0.0",
+  "description": "Zoho contact applicatoin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sairamkrishna1412/zoho.git"
+  },
+  "author": "SAI RAM KRISHNA DURGI",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sairamkrishna1412/zoho/issues"
+  },
+  "homepage": "https://github.com/sairamkrishna1412/zoho#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cookie-session": "^2.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "mongoose": "^6.2.4",
+    "passport": "^0.5.2",
+    "passport-local": "^1.0.0",
+    "validator": "^13.7.0"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0"
+  }
+}
