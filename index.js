@@ -44,7 +44,7 @@ app.use(express.static(path.join(__dirname, 'client', 'build')));
 
 app.use('/auth', authRoutes);
 
-app.use('/contacts', contactRoutes);
+app.use('api/contacts', contactRoutes);
 
 app.use(errorController);
 

@@ -24,12 +24,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Secret is a required field'],
   },
-
-  contacts: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: 'Contact',
-    default: [],
-  },
 });
 
 userSchema.pre('save', async function (next) {

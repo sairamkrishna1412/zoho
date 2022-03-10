@@ -38,6 +38,11 @@ const contactSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid email.`,
     },
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Enter which user this contact belongs to'],
+  },
 });
 
 const contactModel = mongoose.model('Contact', contactSchema);
