@@ -23,21 +23,31 @@ exports.signup = catchAsync(async (req, res, next) => {
     );
   }
 
+  if (body.secret.trim().length < 4) {
+    return next(
+      new AppError(400, `Please enter a secret of atleast 4 characters`)
+    );
+  }
+
   user = await User.create({
     email: body.email,
     password: body.password,
     secret: body.secret,
   });
 
-  res.status(200).json({
-    success: true,
-    data: user,
-  });
+  // res.status(200).json({
+  //   success: true,
+  //   data: user,
+  // });
+  next();
 });
 
 exports.login = (req, res) => {
   console.log('Login Successful.');
-  res.redirect('/');
+  res.status(200).json({
+    success: true,
+    data: req.user,
+  });
 };
 
 exports.logout = (req, res) => {

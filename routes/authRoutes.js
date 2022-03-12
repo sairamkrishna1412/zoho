@@ -5,12 +5,14 @@ require('../services/passport');
 
 const router = express.Router();
 
-router.post('/sigup', authController.signup);
 router.post(
-  '/login',
-  passport.authenticate('local', { failureRedirect: '/login' }),
+  '/signup',
+  authController.signup,
+  passport.authenticate('local'),
   authController.login
 );
+
+router.post('/login', passport.authenticate('local'), authController.login);
 router.post('/logout', authController.logout);
 
 module.exports = router;

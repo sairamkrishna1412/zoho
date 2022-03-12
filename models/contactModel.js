@@ -29,7 +29,7 @@ const contactSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    unique: [true, 'Account with this email already exists.'],
+    // unique: [true, 'Account with this email already exists.'],
     required: [true, 'Email is a required field.'],
     validate: {
       validator: (val) => {

@@ -44,7 +44,19 @@ app.use(express.static(path.join(__dirname, 'client', 'build')));
 
 app.use('/auth', authRoutes);
 
-app.use('api/contacts', contactRoutes);
+app.use('/api/contacts', contactRoutes);
+
+app.get('/api/user', (req, res) => {
+  if (req.user) {
+    return res.status(200).json({
+      success: true,
+      data: req.user,
+    });
+  }
+  res.status(400).json({
+    success: false,
+  });
+});
 
 app.use(errorController);
 
