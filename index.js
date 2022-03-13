@@ -55,7 +55,7 @@ app.get('/api/user', (req, res) => {
 
 app.use(errorController);
 
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, (err) => {
   if (err) {
     console.log("Couldn't start express app,", err);
