@@ -1,16 +1,30 @@
 import { useEffect, useContext } from 'react';
+import ReactDOM from 'react-dom';
 import axios from 'axios';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Home from './pages/Home';
+import ErrorOverlay from './components/ErrorOverlay/ErrorOverlay';
 import AppContext from './store/app-context';
 
 import './App.css';
 
 function App() {
   const appContext = useContext(AppContext);
-  const { userDispatch, contactsDispatch } = appContext;
+  const { userDispatch, contactsDispatch, error } = appContext;
+  useEffect(() => {
+    if (error) {
+      let timer = setTimeout(() => {
+        userDispatch({ type: 'setError', payload: { error: null } });
+      }, 3500);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [error, userDispatch]);
+
   useEffect(() => {
     async function getUser() {
       try {
@@ -35,7 +49,9 @@ function App() {
           userDispatch({
             type: 'setError',
             payload: {
-              error: response.data.message || 'You are not logged in.',
+              error: response.data.hasOwnProperty('message')
+                ? response.data.message
+                : 'You are not logged in, please log in.',
             },
           });
         }
@@ -43,7 +59,9 @@ function App() {
         userDispatch({
           type: 'setError',
           payload: {
-            error: 'You are not logged in.',
+            error: error.response.data.hasOwnProperty('message')
+              ? error.response.data.message
+              : 'You are not logged in, please log in.',
           },
         });
       }
@@ -51,10 +69,13 @@ function App() {
     getUser();
   }, [userDispatch, contactsDispatch]);
 
-  console.log(appContext);
-
   return (
     <div>
+      {error &&
+        ReactDOM.createPortal(
+          <ErrorOverlay message={error}></ErrorOverlay>,
+          document.getElementById('error-root')
+        )}
       <Routes>
         <Route path="/" exact element={<Home></Home>}></Route>
         <Route path="/signup" element={<Signup></Signup>}></Route>

@@ -45,6 +45,8 @@ function contactReducer(state, action) {
       });
       return {
         ...state,
+        isLoading: false,
+        error: null,
         contacts: newContacts,
       };
     }
@@ -52,7 +54,7 @@ function contactReducer(state, action) {
       const newContacts = state.contacts.filter(
         (contact) => contact._id !== action.payload._id
       );
-      return { ...state, contacts: newContacts };
+      return { ...state, isLoading: false, error: null, contacts: newContacts };
     }
     default:
       return state;
@@ -75,6 +77,7 @@ function userReducer(state, action) {
         ...state,
         isLoggedIn: true,
         isLoading: false,
+        error: null,
         user: action.payload.user,
       };
 

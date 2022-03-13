@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import axios from 'axios';
 import Input from '../components/Input/Input';
 import Contacts from '../components/Contacts/Contacts';
+import Loader from '../components/Loader/Loader';
 import AppContext from '../store/app-context';
 
 const Home = () => {
@@ -13,7 +14,7 @@ const Home = () => {
 
   const { isLoading, isLoggedIn } = appContext;
   if (isLoading) {
-    return <h1 className="text-center align-middle">Loading...</h1>;
+    return <Loader></Loader>;
   }
   if (!isLoading && !isLoggedIn) {
     return <Navigate to="/login"></Navigate>;
@@ -52,7 +53,7 @@ const Home = () => {
           payload: {
             error: response.data.hasOwnProperty('message')
               ? response.data.message
-              : 'Something went wrong.',
+              : 'Something went wrong, please try again.',
           },
         });
       }
@@ -60,9 +61,9 @@ const Home = () => {
       appContext.userDispatch({
         type: 'setError',
         payload: {
-          error: response.data.hasOwnProperty('message')
-            ? response.data.message
-            : 'Something went wrong.',
+          error: error.response.data.hasOwnProperty('message')
+            ? error.response.data.message
+            : 'Something went wrong, please try again.',
         },
       });
     }

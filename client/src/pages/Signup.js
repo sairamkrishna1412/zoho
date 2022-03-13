@@ -12,25 +12,40 @@ const Signup = () => {
   const appContext = useContext(AppContext);
 
   const formSubmitHandler = async (event) => {
-    // console.log('trig');
-    event.preventDefault();
-    const response = await axios.post('/auth/signup', {
-      email,
-      password,
-      secret,
-    });
-
-    if (response.status === 200 && response.data.success) {
-      console.log('signup successfull', response.data.data);
-      appContext.userDispatch({
-        type: 'setUser',
-        payload: { user: response.data.data },
+    try {
+      // console.log('trig');
+      event.preventDefault();
+      const response = await axios.post('/auth/signup', {
+        email,
+        password,
+        secret,
       });
-      navigate('/');
-    } else {
+
+      if (response.status === 200 && response.data.success) {
+        // console.log('signup successfull', response.data.data);
+        appContext.userDispatch({
+          type: 'setUser',
+          payload: { user: response.data.data },
+        });
+        navigate('/');
+      } else {
+        appContext.userDispatch({
+          type: 'setError',
+          payload: {
+            error: response.data.hasOwnProperty('message')
+              ? response.data.message
+              : 'Signup failed, please try again.',
+          },
+        });
+      }
+    } catch (error) {
       appContext.userDispatch({
         type: 'setError',
-        payload: { error: response.data.message || 'Could not signup!!!' },
+        payload: {
+          error: error.response.data.hasOwnProperty('message')
+            ? error.response.data.message
+            : 'Signup failed, please try again.',
+        },
       });
     }
   };

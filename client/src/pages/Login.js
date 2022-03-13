@@ -21,14 +21,14 @@ const Login = () => {
   const formSubmitHandler = async (e) => {
     try {
       e.preventDefault();
-      console.log('trig');
+      // console.log('trig');
       const response = await axios.post('/auth/login', {
         email,
         password,
       });
 
       if (response.status === 200 && response.data.success) {
-        console.log('signup successfull', response.data.data);
+        // console.log('login successfull', response.data.data);
         appContext.userDispatch({
           type: 'setUser',
           payload: { user: response.data.data },
@@ -37,13 +37,21 @@ const Login = () => {
       } else {
         appContext.userDispatch({
           type: 'setError',
-          payload: { error: response.data.message || 'Could not login!!!' },
+          payload: {
+            error: response.data.hasOwnProperty('message')
+              ? response.data.message
+              : 'Login failed, please try again.',
+          },
         });
       }
     } catch (error) {
       appContext.userDispatch({
         type: 'setError',
-        payload: { error: 'Could not login!!!' },
+        payload: {
+          error: error.response.data.hasOwnProperty('message')
+            ? error.response.data.message
+            : 'Login failed, please try again.',
+        },
       });
     }
   };
