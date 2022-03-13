@@ -52,5 +52,7 @@ exports.login = (req, res) => {
 
 exports.logout = (req, res) => {
   req.logout();
-  res.redirect('/login');
+  res.status(200).json({
+    success: true,
+  });
 };

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import Input from '../components/Input/Input';
+import Loader from '../components/Loader/Loader';
 import axios from 'axios';
 import AppContext from '../store/app-context';
 
@@ -12,7 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   if (isLoading) {
-    return <h1 className="text-center align-middle">Loading...</h1>;
+    return <Loader></Loader>;
   }
   if (!isLoading && isLoggedIn && user.hasOwnProperty('_id')) {
     return <Navigate to="/"></Navigate>;
@@ -33,6 +34,24 @@ const Login = () => {
           type: 'setUser',
           payload: { user: response.data.data },
         });
+
+        const contactsRes = await axios.get('/api/contacts');
+        console.log(contactsRes);
+        if (
+          contactsRes.status === 200 &&
+          contactsRes.data.success &&
+          contactsRes.data.data.length > 0
+        ) {
+          appContext.contactsDispatch({
+            type: 'setContacts',
+            payload: { contacts: contactsRes.data.data },
+          });
+        }
+
+        appContext.userDispatch({
+          type: 'setMessage',
+          payload: { message: `Login Successful.` },
+        });
         navigate('/');
       } else {
         appContext.userDispatch({
@@ -44,12 +63,12 @@ const Login = () => {
           },
         });
       }
-    } catch (error) {
+    } catch (err) {
       appContext.userDispatch({
         type: 'setError',
         payload: {
-          error: error.response.data.hasOwnProperty('message')
-            ? error.response.data.message
+          error: err.response.data.hasOwnProperty('message')
+            ? err.response.data.message
             : 'Login failed, please try again.',
         },
       });

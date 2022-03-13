@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Input from '../components/Input/Input';
 import Contacts from '../components/Contacts/Contacts';
@@ -7,6 +7,7 @@ import Loader from '../components/Loader/Loader';
 import AppContext from '../store/app-context';
 
 const Home = () => {
+  const navigate = useNavigate();
   const appContext = useContext(AppContext);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -31,10 +32,9 @@ const Home = () => {
   };
 
   async function addContactHandler(e) {
-    let response;
     try {
       e.preventDefault();
-      response = await axios.post('/api/contacts/add', {
+      const response = await axios.post('/api/contacts/add', {
         name,
         phone,
         email,
@@ -43,6 +43,10 @@ const Home = () => {
         appContext.contactsDispatch({
           type: 'addContact',
           payload: { contact: response.data.data },
+        });
+        appContext.userDispatch({
+          type: 'setMessage',
+          payload: { message: `Added new contact : ${name}` },
         });
         setName('');
         setPhone('');
@@ -57,12 +61,49 @@ const Home = () => {
           },
         });
       }
-    } catch (error) {
+    } catch (err) {
       appContext.userDispatch({
         type: 'setError',
         payload: {
-          error: error.response.data.hasOwnProperty('message')
-            ? error.response.data.message
+          error: err.response.data.hasOwnProperty('message')
+            ? err.response.data.message
+            : 'Something went wrong, please try again.',
+        },
+      });
+    }
+  }
+
+  async function logoutHandler(e) {
+    try {
+      e.preventDefault();
+      const response = await axios.post('/auth/logout');
+      if (response.status === 200 && response.data.success) {
+        appContext.userDispatch({ type: 'logout' });
+        appContext.contactsDispatch({
+          type: 'setContacts',
+          payload: { contacts: [] },
+        });
+        appContext.userDispatch({
+          type: 'setMessage',
+          payload: { message: `Logged out.` },
+        });
+        navigate('/login');
+      } else {
+        appContext.userDispatch({
+          type: 'setError',
+          payload: {
+            error: response.data.hasOwnProperty('message')
+              ? response.data.message
+              : 'Something went wrong, please try again.',
+          },
+        });
+      }
+    } catch (err) {
+      appContext.userDispatch({
+        type: 'setError',
+        payload: {
+          error: err.response.data.hasOwnProperty('message')
+            ? err.response.data.message
             : 'Something went wrong, please try again.',
         },
       });
@@ -72,8 +113,16 @@ const Home = () => {
   return (
     <div className="container">
       <div className="text-center my-10">
-        <h1 className=" text-3xl font-medium">Contacts</h1>
-        <form onSubmit={addContactHandler} className="mt-20 max-w-xl mx-auto">
+        <div className="flex justify-between items-center">
+          <h1 className=" text-3xl font-medium self-center">Contacts</h1>
+          <button
+            className=" px-5 py-2 bg-secondary text-gray-100 rounded-full cursor-pointer hover:bg-primary hover:text-white"
+            onClick={logoutHandler}
+          >
+            Logout
+          </button>
+        </div>
+        <form onSubmit={addContactHandler} className=" mt-10 max-w-xl mx-auto">
           <h1 className="text-xl">Add Contact</h1>
           <Input
             label="Name"
@@ -108,7 +157,14 @@ const Home = () => {
       <hr />
       <div className="my-20 text-center max-w-5xl mx-auto">
         <h1 className=" text-2xl">My Contacts</h1>
-        <Contacts contacts={appContext.contacts}></Contacts>
+        {appContext.contacts.length > 0 && (
+          <Contacts contacts={appContext.contacts}></Contacts>
+        )}
+        {appContext.contacts.length === 0 && (
+          <h1 className="mt-10 text-2xl text-gray-400">
+            No Contacts yet. Please add contacts.
+          </h1>
+        )}
         {/* <div className="mt-14 rounded-md">
           <div className="grid grid-cols-3 bg-primary py-5 rounded-t-xl text-xl font-medium">
             <p>Name</p>

@@ -4,7 +4,7 @@ const initState = {
   isLoggedIn: false,
   // setIsLoggedIn: () => {},
   isLoading: true,
-  error: null,
+  message: null,
   // setIsLoading: () => {},
   contacts: [],
   user: {},
@@ -25,14 +25,14 @@ function contactReducer(state, action) {
       return {
         ...state,
         isLoading: false,
-        error: null,
+        message: null,
         contacts: [...action.payload.contacts],
       };
     case 'addContact': {
       return {
         ...state,
         isLoading: false,
-        error: null,
+        message: null,
         contacts: [...state.contacts, action.payload.contact],
       };
     }
@@ -46,7 +46,7 @@ function contactReducer(state, action) {
       return {
         ...state,
         isLoading: false,
-        error: null,
+        message: null,
         contacts: newContacts,
       };
     }
@@ -54,7 +54,12 @@ function contactReducer(state, action) {
       const newContacts = state.contacts.filter(
         (contact) => contact._id !== action.payload._id
       );
-      return { ...state, isLoading: false, error: null, contacts: newContacts };
+      return {
+        ...state,
+        isLoading: false,
+        message: null,
+        contacts: newContacts,
+      };
     }
     default:
       return state;
@@ -70,14 +75,27 @@ function userReducer(state, action) {
       return { ...state, isLoading: action.payload.isLoading };
 
     case 'setError':
-      return { ...state, isLoading: false, error: action.payload.error };
+      return { ...state, isLoading: false, message: action.payload.error };
+
+    case 'setMessage':
+      return { ...state, isLoading: false, message: action.payload.message };
+
+    case 'logout':
+      return {
+        ...state,
+        isLoggedIn: false,
+        isLoading: false,
+        message: null,
+        contacts: [],
+        user: {},
+      };
 
     case 'setUser':
       return {
         ...state,
         isLoggedIn: true,
         isLoading: false,
-        error: null,
+        message: null,
         user: action.payload.user,
       };
 
@@ -95,7 +113,7 @@ export const ContextProvider = (props) => {
       value={{
         isLoggedIn: user.isLoggedIn,
         isLoading: user.isLoading,
-        error: user.error,
+        message: user.message,
         contacts: contacts.contacts,
         user: user.user,
         contactsDispatch,

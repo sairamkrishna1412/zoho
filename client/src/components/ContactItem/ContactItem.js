@@ -23,6 +23,10 @@ const ContactItem = (props) => {
           type: 'deleteContact',
           payload: { _id },
         });
+        appContext.userDispatch({
+          type: 'setMessage',
+          payload: { message: `Deleted contact : ${contact.name}` },
+        });
       } else {
         appContext.userDispatch({
           type: 'setError',
@@ -33,12 +37,12 @@ const ContactItem = (props) => {
           },
         });
       }
-    } catch (error) {
+    } catch (err) {
       appContext.userDispatch({
         type: 'setError',
         payload: {
-          error: error.response.data.hasOwnProperty('message')
-            ? error.response.data.message
+          error: err.response.data.hasOwnProperty('message')
+            ? err.response.data.message
             : 'Contact delete failed, please try again.',
         },
       });
@@ -57,6 +61,10 @@ const ContactItem = (props) => {
           type: 'updateContact',
           payload: { contact: response.data.data },
         });
+        appContext.userDispatch({
+          type: 'setMessage',
+          payload: { message: `Updated contact : ${contact.name}` },
+        });
       } else {
         appContext.userDispatch({
           type: 'setError',
@@ -67,12 +75,12 @@ const ContactItem = (props) => {
           },
         });
       }
-    } catch (error) {
+    } catch (err) {
       appContext.userDispatch({
         type: 'setError',
         payload: {
-          error: error.response.data.hasOwnProperty('message')
-            ? error.response.data.message
+          error: err.response.data.hasOwnProperty('message')
+            ? err.response.data.message
             : 'Contact update failed, please try again.',
         },
       });

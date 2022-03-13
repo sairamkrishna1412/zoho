@@ -5,25 +5,25 @@ import { Route, Routes } from 'react-router-dom';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Home from './pages/Home';
-import ErrorOverlay from './components/ErrorOverlay/ErrorOverlay';
+import MessageOverlay from './components/MessageOverlay/MessageOverlay';
 import AppContext from './store/app-context';
 
 import './App.css';
 
 function App() {
   const appContext = useContext(AppContext);
-  const { userDispatch, contactsDispatch, error } = appContext;
+  const { userDispatch, contactsDispatch, message } = appContext;
   useEffect(() => {
-    if (error) {
+    if (message) {
       let timer = setTimeout(() => {
-        userDispatch({ type: 'setError', payload: { error: null } });
-      }, 3500);
+        userDispatch({ type: 'setMessage', payload: { message: null } });
+      }, 3000);
 
       return () => {
         clearTimeout(timer);
       };
     }
-  }, [error, userDispatch]);
+  }, [message, userDispatch]);
 
   useEffect(() => {
     async function getUser() {
@@ -55,12 +55,12 @@ function App() {
             },
           });
         }
-      } catch (error) {
+      } catch (err) {
         userDispatch({
           type: 'setError',
           payload: {
-            error: error.response.data.hasOwnProperty('message')
-              ? error.response.data.message
+            error: err.response.data.hasOwnProperty('message')
+              ? err.response.data.message
               : 'You are not logged in, please log in.',
           },
         });
@@ -71,15 +71,15 @@ function App() {
 
   return (
     <div>
-      {error &&
+      {message &&
         ReactDOM.createPortal(
-          <ErrorOverlay message={error}></ErrorOverlay>,
-          document.getElementById('error-root')
+          <MessageOverlay message={message}></MessageOverlay>,
+          document.getElementById('message-root')
         )}
       <Routes>
         <Route path="/" exact element={<Home></Home>}></Route>
-        <Route path="/signup" element={<Signup></Signup>}></Route>
-        <Route path="/login" element={<Login></Login>}></Route>
+        <Route path="/signup" element={<Signup></Signup>} exact></Route>
+        <Route path="/login" element={<Login></Login>} exact></Route>
       </Routes>
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const ErrorOverlay = (props) => {
+const MessageOverlay = (props) => {
   const [top, setTop] = useState(window.scrollY);
 
   useEffect(() => {
@@ -21,4 +21,4 @@ const ErrorOverlay = (props) => {
   );
 };
 
-export default ErrorOverlay;
+export default MessageOverlay;

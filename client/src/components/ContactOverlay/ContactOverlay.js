@@ -26,7 +26,7 @@ const ContactOverlay = (props) => {
   return (
     <div className="absolute max-w-xl w-full inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-0 z-20">
       <div className=" bg-white shadow-md rounded-xl">
-        <p className="flex justify-end mt-3 mr-3">
+        <p className="flex justify-end pt-3 pr-3">
           <img
             className="cursor-pointer"
             onClick={props.onClose}

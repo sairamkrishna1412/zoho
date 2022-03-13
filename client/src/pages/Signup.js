@@ -1,7 +1,8 @@
 import axios from 'axios';
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import Input from '../components/Input/Input';
+import Loader from '../components/Loader/Loader';
 import AppContext from '../store/app-context';
 
 const Signup = () => {
@@ -10,6 +11,14 @@ const Signup = () => {
   const [secret, setSecret] = useState('');
   const navigate = useNavigate();
   const appContext = useContext(AppContext);
+  const { isLoading, isLoggedIn, user } = appContext;
+
+  if (isLoading) {
+    return <Loader></Loader>;
+  }
+  if (!isLoading && isLoggedIn && user.hasOwnProperty('_id')) {
+    return <Navigate to="/"></Navigate>;
+  }
 
   const formSubmitHandler = async (event) => {
     try {
@@ -27,6 +36,10 @@ const Signup = () => {
           type: 'setUser',
           payload: { user: response.data.data },
         });
+        appContext.userDispatch({
+          type: 'setMessage',
+          payload: { message: `Signup Successful.` },
+        });
         navigate('/');
       } else {
         appContext.userDispatch({
@@ -38,12 +51,12 @@ const Signup = () => {
           },
         });
       }
-    } catch (error) {
+    } catch (err) {
       appContext.userDispatch({
         type: 'setError',
         payload: {
-          error: error.response.data.hasOwnProperty('message')
-            ? error.response.data.message
+          error: err.response.data.hasOwnProperty('message')
+            ? err.response.data.message
             : 'Signup failed, please try again.',
         },
       });
